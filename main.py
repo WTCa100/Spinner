@@ -9,8 +9,16 @@ logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s 
 LUCKY_NUMBER = 13
 
 class Slots():
+
+    def _validate_wager(self, P):
+        return str.isdigit(P)
+
     def _calculate_win(self, numbers_dict: dict, wager: int):
         win = 0
+
+        if not wager:
+            return win
+
         if LUCKY_NUMBER in numbers_dict.keys():
             # Power the win!
             logger.debug(f"LUCKY NUMBER present: {numbers_dict.keys()}")
@@ -21,7 +29,6 @@ class Slots():
             if occurances > 1 and number != LUCKY_NUMBER:
                 win += wager * occurances
         return win
-
 
     def _spin(self, *args):
         balance_numeric = self.balance.get()
@@ -73,7 +80,9 @@ class Slots():
         ttk.Label(balance_frame, text="Your balance:").grid(column=0, row=1)
         ttk.Label(balance_frame, textvariable=self.balance).grid(column=0, row=2)
         ttk.Label(balance_frame, text="Wager:").grid(column=0, row=3)
-        ttk.Entry(balance_frame, textvariable=self.wager).grid(column=1, row=3)
+        
+        validation_cmd = mainframe.register(self._validate_wager)
+        ttk.Entry(balance_frame, textvariable=self.wager, validate="all", validatecommand=(validation_cmd, "%P")).grid(column=1, row=3)
 
         root.bind("<Return>", self._spin)
 
