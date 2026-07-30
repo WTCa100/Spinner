@@ -10,6 +10,15 @@ LUCKY_NUMBER = 13
 
 class Slots():
 
+    def _set_defalt_slot_style(self):
+        for col in self.numbers_lbl:
+            for row in self.numbers_lbl:
+                self.numbers_lbl[col][row].grid(column=col, row=row, padx=25, pady=5)
+                self.numbers_lbl[col][row].configure(background="yellow")
+
+    def _swap_to_lucky_number_color(self, label: ttk.Label):
+        label.configure(background="green")
+
     def _validate_wager(self, P):
         return str.isdigit(P)
 
@@ -31,11 +40,14 @@ class Slots():
         return win
 
     def _spin(self, *args):
+        self._set_defalt_slot_style()
         balance_numeric = self.balance.get()
-        wager_numeric = self.wager.get() # for now
+        wager_numeric = self.wager.get()
+
         if balance_numeric < wager_numeric:
             logger.info(f"Cannot spin! {balance_numeric} < {wager_numeric}")
             return
+
         balance_numeric -= wager_numeric
         numbers_generated = {}
         for column in self.numbers:
@@ -45,6 +57,10 @@ class Slots():
                     numbers_generated[generated] += 1
                 else:
                     numbers_generated[generated] = 1
+
+                if generated == LUCKY_NUMBER:
+                    self._swap_to_lucky_number_color(self.numbers_lbl[column][row])
+
                 self.numbers[column][row].set(generated)
         # very simple winning calculation
         win = self._calculate_win(numbers_dict=numbers_generated, wager=wager_numeric)
@@ -54,21 +70,23 @@ class Slots():
     def __init__(self, root: Tk):
         root.title = "Slot machine game"
         root.geometry("640x480")
-        
-        mainframe = ttk.Frame(root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
-        mainframe.grid(column=0, row=0, padx=25, pady=25)
-        ttk.Label(mainframe, text="Slot machine").grid(column=1, row=3)
+
+        self.mainframe = ttk.Frame(root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
+        self.mainframe.grid(column=0, row=0, padx=25, pady=25, sticky=NSEW)
+        ttk.Label(self.mainframe, text="Slot machine").grid(column=1, row=3)
 
         slot_frame = ttk.Frame(root, borderwidth=1, border=1, relief="solid")
         slot_frame.grid(column=0, row=1, padx=20)
 
         self.numbers = {}
+        self.numbers_lbl: dict[int, list[ttk.Label]] = {}
         for col in range(3):
             self.numbers[col] = []
+            self.numbers_lbl[col] = []
             for row in range(3):
                 self.numbers[col].append(IntVar(value=0))
-                ttk.Label(slot_frame, textvariable=self.numbers[col][row], borderwidth=1, border=1, relief="raised", background="yellow").grid(column=col, row=row, padx=25, pady=5)
-
+                self.numbers_lbl[col].append(ttk.Label(slot_frame, textvariable=self.numbers[col][row], borderwidth=1, border=1, relief="raised", background="yellow"))
+        self._set_defalt_slot_style()
         spinning_frame = ttk.Frame(root, borderwidth=1, border=1, relief="ridge")
         spinning_frame.grid(column=0, row=2)
         ttk.Button(spinning_frame, text="! ! !Spin! ! !", command=self._spin).grid(column=2, row=0)
@@ -81,7 +99,7 @@ class Slots():
         ttk.Label(balance_frame, textvariable=self.balance).grid(column=0, row=2)
         ttk.Label(balance_frame, text="Wager:").grid(column=0, row=3)
         
-        validation_cmd = mainframe.register(self._validate_wager)
+        validation_cmd = self.mainframe.register(self._validate_wager)
         ttk.Entry(balance_frame, textvariable=self.wager, validate="all", validatecommand=(validation_cmd, "%P")).grid(column=1, row=3)
 
         root.bind("<Return>", self._spin)
