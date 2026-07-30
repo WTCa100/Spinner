@@ -3,6 +3,9 @@ from tkinter import ttk
 import random
 import logging
 
+logger = logging.getLogger("SlotLog")
+logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s > %(msg)s", level=logging.DEBUG)
+
 LUCKY_NUMBER = 13
 
 class Slots():
@@ -10,11 +13,11 @@ class Slots():
         win = 0
         if LUCKY_NUMBER in numbers_dict.keys():
             # Power the win!
-            print(f"DEBUG: LUCKY NUMBER present: {numbers_dict.keys()}")
+            logger.debug(f"LUCKY NUMBER present: {numbers_dict.keys()}")
             win += pow(wager, numbers_dict[LUCKY_NUMBER] + 1)
 
         for number, occurances in numbers_dict.items():
-            print(f"DEBUG: Number of occurances of {number} -> {occurances}")
+            logger.debug(f"Number of occurances of {number} -> {occurances}")
             if occurances > 1 and number != LUCKY_NUMBER:
                 win += wager * occurances
         return win
@@ -24,7 +27,7 @@ class Slots():
         balance_numeric = self.balance.get()
         wager_numeric = self.wager.get() # for now
         if balance_numeric < wager_numeric:
-            print(f"DEBUG: Cannot spin! {balance_numeric} < {wager_numeric}")
+            logger.info(f"Cannot spin! {balance_numeric} < {wager_numeric}")
             return
         balance_numeric -= wager_numeric
         numbers_generated = {}
@@ -38,7 +41,7 @@ class Slots():
                 self.numbers[column][row].set(generated)
         # very simple winning calculation
         win = self._calculate_win(numbers_dict=numbers_generated, wager=wager_numeric)
-        print(f"DEBUG: Won {win} from wager {wager_numeric}. New balance {balance_numeric + win} old balance {balance_numeric}")
+        logger.info(f"Won {win} from wager {wager_numeric}. New balance {balance_numeric + win} old balance {balance_numeric}")
         self.balance.set(balance_numeric + win)
 
     def __init__(self, root: Tk):
