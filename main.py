@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter import ttk
-import random
 import logging
+
+from slot import Slot
 
 logger = logging.getLogger("SlotLog")
 logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s > %(msg)s", level=logging.DEBUG)
@@ -13,11 +14,8 @@ class Slots():
     def _set_defalt_slot_style(self):
         for col in self.numbers_lbl:
             for row in self.numbers_lbl:
-                self.numbers_lbl[col][row].grid(column=col, row=row, padx=25, pady=5)
-                self.numbers_lbl[col][row].configure(background="yellow")
-
-    def _swap_to_lucky_number_color(self, label: ttk.Label):
-        label.configure(background="green")
+                self.numbers_lbl[col][row].frame.grid(column=col, row=row, padx=25, pady=5)
+                self.numbers_lbl[col][row].frame.configure(background="yellow")
 
     def _validate_wager(self, P):
         return str.isdigit(P)
@@ -52,14 +50,14 @@ class Slots():
         numbers_generated = {}
         for column in self.numbers:
             for row in self.numbers:
-                generated = random.randint(0, 99)
+                generated = self.numbers_lbl[column][row].generate()
                 if generated in numbers_generated:
                     numbers_generated[generated] += 1
                 else:
                     numbers_generated[generated] = 1
 
                 if generated == LUCKY_NUMBER:
-                    self._swap_to_lucky_number_color(self.numbers_lbl[column][row])
+                    self.numbers_lbl[column][row].change_color_to_lucky()
 
                 self.numbers[column][row].set(generated)
         # very simple winning calculation
@@ -79,13 +77,13 @@ class Slots():
         slot_frame.grid(column=0, row=1, padx=20)
 
         self.numbers = {}
-        self.numbers_lbl: dict[int, list[ttk.Label]] = {}
+        self.numbers_lbl: dict[int, list[Slot]] = {}
         for col in range(3):
             self.numbers[col] = []
             self.numbers_lbl[col] = []
             for row in range(3):
                 self.numbers[col].append(IntVar(value=0))
-                self.numbers_lbl[col].append(ttk.Label(slot_frame, textvariable=self.numbers[col][row], borderwidth=1, border=1, relief="raised", background="yellow"))
+                self.numbers_lbl[col].append(Slot(slot_frame, self.numbers[col][row], (col, row)))
         self._set_defalt_slot_style()
         spinning_frame = ttk.Frame(root, borderwidth=1, border=1, relief="ridge")
         spinning_frame.grid(column=0, row=2)
