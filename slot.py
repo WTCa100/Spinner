@@ -23,7 +23,7 @@ class Slot:
         s = f"Symbol_{number_value}"
         self.position = pos
         self.frame = ttk.Label(root, textvariable=self.number_var, borderwidth=1, border=1, relief="raised", background="yellow")
-        self.frame.grid(column=self.position[0], row=self.position[1]) # Magic numbers for now
+        self.frame.grid(column=self.position[0], row=self.position[1], padx=25, pady=5) # Magic numbers for now
 
     def __eq__(self, other):
         return self.number == other
@@ -36,3 +36,5 @@ class Slot:
     def change_color_to_lucky(self):
         self.frame.configure(background="green")
 
+    def reset_slot_color(self):
+        self.frame.configure(background="yellow")

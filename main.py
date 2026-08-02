@@ -14,8 +14,7 @@ class Slots():
     def _set_defalt_slot_style(self):
         for col in self.numbers_lbl:
             for row in self.numbers_lbl:
-                self.numbers_lbl[col][row].frame.grid(column=col, row=row, padx=25, pady=5)
-                self.numbers_lbl[col][row].frame.configure(background="yellow")
+                self.numbers_lbl[col][row].reset_slot_color()
 
     def _validate_wager(self, P):
         return str.isdigit(P)
@@ -96,7 +95,7 @@ class Slots():
         ttk.Label(balance_frame, text="Your balance:").grid(column=0, row=1)
         ttk.Label(balance_frame, textvariable=self.balance).grid(column=0, row=2)
         ttk.Label(balance_frame, text="Wager:").grid(column=0, row=3)
-        
+
         validation_cmd = self.mainframe.register(self._validate_wager)
         ttk.Entry(balance_frame, textvariable=self.wager, validate="all", validatecommand=(validation_cmd, "%P")).grid(column=1, row=3)
 
