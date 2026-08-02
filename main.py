@@ -66,7 +66,7 @@ class Slots():
         self.balance.set(balance_numeric + win)
 
     def __init__(self, root: Tk):
-        root.title = "Slot machine game"
+        root.wm_title("Slot machine game")
         root.geometry("640x480")
 
         self.mainframe = ttk.Frame(root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
