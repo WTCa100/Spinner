@@ -1,10 +1,13 @@
 from tkinter import *
 from tkinter import ttk
+from PIL import Image, ImageTk
+
 import logging
 
+from image_helper.image_helper import ImageHelper
 from slot import Slot
 
-logger = logging.getLogger("SlotLog")
+logger = logging.getLogger("MainLoop")
 logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s > %(msg)s", level=logging.DEBUG)
 
 LUCKY_NUMBER = 13
@@ -67,6 +70,7 @@ class Slots():
     def __init__(self, root: Tk):
         root.wm_title("Slot machine game")
         root.geometry("640x480")
+        image_helper = ImageHelper()
 
         self.mainframe = ttk.Frame(root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
         self.mainframe.grid(column=0, row=0, padx=25, pady=25, sticky=NSEW)
@@ -82,7 +86,7 @@ class Slots():
             self.numbers_lbl[col] = []
             for row in range(3):
                 self.numbers[col].append(IntVar(value=0))
-                self.numbers_lbl[col].append(Slot(slot_frame, self.numbers[col][row], (col, row)))
+                self.numbers_lbl[col].append(Slot(slot_frame, n_tkVar=self.numbers[col][row], pos=(col, row), image_helper=image_helper))
         self._set_defalt_slot_style()
         spinning_frame = ttk.Frame(root, borderwidth=1, border=1, relief="ridge")
         spinning_frame.grid(column=0, row=2)
