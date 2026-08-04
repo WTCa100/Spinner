@@ -22,8 +22,7 @@ class Slots():
     def _validate_wager(self, P):
         return str.isdigit(P)
 
-    def _reset(self):
-        self._set_defalt_slot_style()
+    def _reset(self, event=None):
         self.balance.set(100)
         self.wager.set(10)
 
@@ -116,6 +115,8 @@ class Slots():
         ttk.Entry(balance_frame, textvariable=self.wager, validate="all", validatecommand=(validation_cmd, "%P")).grid(column=1, row=3)
 
         root.bind("<Return>", self._spin)
+        root.bind("R", self._reset)
+        root.bind("r", self._reset)
 
 root = Tk()
 Slots(root=root)
