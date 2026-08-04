@@ -22,6 +22,11 @@ class Slots():
     def _validate_wager(self, P):
         return str.isdigit(P)
 
+    def _reset(self):
+        self._set_defalt_slot_style()
+        self.balance.set(100)
+        self.wager.set(10)
+
     def _calculate_win(self, numbers_dict: dict, wager: int):
         win = 0
 
@@ -75,6 +80,13 @@ class Slots():
         self.mainframe = ttk.Frame(root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
         self.mainframe.grid(column=0, row=0, padx=25, pady=25, sticky=NSEW)
         ttk.Label(self.mainframe, text="Slot machine").grid(column=1, row=3)
+
+
+        main_menu_bar = Menu(root)
+        game_menu = Menu(main_menu_bar)
+        game_menu.add_command(label="Reset", command=self._reset)
+        main_menu_bar.add_cascade(menu=game_menu, label="Game")
+        root['menu'] = main_menu_bar
 
         slot_frame = ttk.Frame(root, borderwidth=1, border=1, relief="solid")
         slot_frame.grid(column=0, row=1, padx=20)
