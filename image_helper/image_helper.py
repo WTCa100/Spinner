@@ -1,6 +1,10 @@
 from PIL import Image, ImageTk
 from image_helper.symbol import SYMBOLS, Symbol
 
+import logging
+
+logger = logging.getLogger("ImageHelperLog")
+
 class ImageHelper:
     code_to_image: dict[int, ImageTk.PhotoImage]
 
@@ -11,7 +15,7 @@ class ImageHelper:
     def __init__(self):
         self.code_to_image = {}
         for symbol in SYMBOLS:
-            print(f"Loading symbol: {symbol.name}")
+            logger.info(f"Loading symbol: {symbol.name}")
             self._load_symbol(symbol)
 
     def __getitem__(self, key) -> ImageTk.PhotoImage | None:
