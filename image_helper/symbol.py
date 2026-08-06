@@ -17,5 +17,7 @@ SYMBOLS = [
     Symbol("res/Seven-Sprite.png", 7, "Seven"),
     Symbol("res/Grapes-Sprite.png", 8, "Grapes"),
     Symbol("res/Rose-Sprite.png", 9, "Rose"),
+    Symbol("res/Diamond-Sprite.png", 10, "Diamond"),
+    Symbol("res/Emerald-Sprite.png", 11, "Emerald"),
     Symbol("res/Apple-Sprite.png", 13, "Apple"),
 ]
