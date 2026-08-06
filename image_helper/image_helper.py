@@ -15,7 +15,7 @@ class ImageHelper:
     def __init__(self):
         self.code_to_image = {}
         for symbol in SYMBOLS:
-            logger.info(f"Loading symbol: {symbol.name}")
+            logger.info(f"Loading symbol {symbol.name} code {symbol.number}")
             self._load_symbol(symbol)
 
     def __getitem__(self, key) -> ImageTk.PhotoImage | None:

@@ -38,6 +38,7 @@ class Slot:
     def _handle_symbol(self, number: int):
         symbol = self.image_helper[number]
         if symbol:
+            logger.debug(f"Getting symbol for {number}")
             self.frame.config(image=symbol)
         else:
             self.frame.config(image="")
