@@ -5,6 +5,7 @@ import logging
 
 from image_helper.image_helper import ImageHelper
 from machine import Machine
+from player import Player
 
 logger = logging.getLogger("MainLoop")
 logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s > %(msg)s", level=logging.DEBUG)
@@ -12,34 +13,26 @@ logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s 
 LUCKY_NUMBER = 13
 
 class App():
-
-    spin_count = 0
-
     def _validate_wager(self, P):
         return str.isdigit(P)
 
     def _reset(self, event=None):
-        self.balance.set(100)
+        self.player.reset_stats()
+        self.machine.reset_spin_count()
         self.wager.set(10)
 
     def _spin(self, *args):
-        balance_numeric = self.balance.get()
+        balance_numeric = self.player.balance.get()
         wager_numeric = self.wager.get()
         balance_numeric -= wager_numeric
         win = self.machine.spin(wager=wager_numeric)
         balance_numeric += win
-        self.spin_count += 1
-        self.balance.set(balance_numeric)
-        logger.info(f"Spin {self.spin_count} concluded with: wager={self.wager.get()} win={win}")
+        self.player.balance.set(balance_numeric)
 
     def __init__(self, root: Tk):
         root.wm_title("Slot machine game")
         root.geometry("640x480")
         image_helper = ImageHelper()
-
-        self.mainframe = ttk.Frame(root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
-        self.mainframe.grid(column=0, row=0, padx=25, pady=25, sticky=NSEW)
-        ttk.Label(self.mainframe, text="Slot machine").grid(column=1, row=3)
 
         main_menu_bar = Menu(root)
         game_menu = Menu(main_menu_bar)
@@ -47,18 +40,18 @@ class App():
         main_menu_bar.add_cascade(menu=game_menu, label="Game")
         root['menu'] = main_menu_bar
 
-        self.machine = Machine(root, image_helper)
+        self.mainframe = ttk.Frame(root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
+        self.mainframe.grid(column=0, row=0, padx=25, pady=25, sticky=NSEW)
+        self.machine = Machine(self.mainframe, image_helper)
+        ttk.Button(self.mainframe, text="! ! !Spin! ! !", command=self._spin).grid(column=0, row=2)
 
-        spinning_frame = ttk.Frame(root, borderwidth=1, border=1, relief="ridge")
-        spinning_frame.grid(column=0, row=2)
-        ttk.Button(spinning_frame, text="! ! !Spin! ! !", command=self._spin).grid(column=2, row=0)
 
         balance_frame = ttk.Frame(root, borderwidth=1, border=1, relief="groove")
         balance_frame.grid(column=1, row=0)
-        self.balance = IntVar(value=100)
+        self.player = Player(initial_balance=100, name="Jane Doe")
         self.wager = IntVar(value=10)
         ttk.Label(balance_frame, text="Your balance:").grid(column=0, row=1)
-        ttk.Label(balance_frame, textvariable=self.balance).grid(column=0, row=2)
+        ttk.Label(balance_frame, textvariable=self.player.balance).grid(column=0, row=2)
         ttk.Label(balance_frame, text="Wager:").grid(column=0, row=3)
 
         validation_cmd = self.mainframe.register(self._validate_wager)

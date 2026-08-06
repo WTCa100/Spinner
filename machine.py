@@ -15,8 +15,18 @@ class Machine:
     slot_matrix: dict[int, list[Slot]]
 
     def __init__(self, master, image_helper):
-        self.frame = ttk.Frame(borderwidth=2, relief="solid")
-        self.frame.grid()
+        ttk.Label(master, text="Slot machine").grid(column=0, row=0)
+        self.frame = ttk.Frame(master, borderwidth=2, relief="solid")
+        self.frame.grid(column=0, row=1)
+
+        spinning_frame = ttk.Frame(master)
+        spinning_frame.grid(column=0, row=3)
+        self.spin_count = IntVar(value=0)
+        spin_counter_text = ttk.Label(spinning_frame, text="Spins: ")
+        spin_counter = ttk.Label(spinning_frame, textvariable=self.spin_count)
+        spin_counter_text.grid(column=0, row=3)
+        spin_counter.grid(column=1, row=3)
+
         self.image_helper = image_helper
         self.slot_matrix = {}
         for col in range(3):
@@ -54,8 +64,16 @@ class Machine:
         for col in range(3):
             for row in range(3):
                 generated = self.slot_matrix[col][row].generate()
+                if generated == LUCKY_NUMBER:
+                    self.slot_matrix[col][row].change_color_to_lucky()
                 if generated in spin_result:
                     spin_result[generated] += 1
                 else:
                     spin_result[generated] = 1
-        return self._calculate_win(wager, spin_result)
+        self.spin_count.set(self.spin_count.get() + 1)
+        win = self._calculate_win(wager, spin_result)
+        logger.info(f"Spin {self.spin_count.get()} concluded with: wager={wager} win={win}")
+        return win
+
+    def reset_spin_count(self):
+        self.spin_count.set(0)
