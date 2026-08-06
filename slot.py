@@ -53,5 +53,8 @@ class Slot:
     def change_color_to_lucky(self):
         self.frame.configure(background="green")
 
+    def change_color_winner(self, color):
+        self.frame.configure(background=color)
+
     def reset_slot_color(self):
         self.frame.configure(background="yellow")

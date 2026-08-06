@@ -20,10 +20,15 @@ class App():
         self.player.reset_stats()
         self.machine.reset_spin_count()
         self.wager.set(10)
+        self.win_loose_ratio.set(0.0)
 
     def _spin(self, *args):
         balance_numeric = self.player.balance.get()
         wager_numeric = self.wager.get()
+
+        if balance_numeric < wager_numeric:
+            return
+
         balance_numeric -= wager_numeric
         win = self.machine.spin(wager=wager_numeric)
 

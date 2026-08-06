@@ -14,6 +14,11 @@ class Machine:
     image_helper: ImageHelper
     slot_matrix: dict[int, list[Slot]]
 
+    COLOR_PALLET = [
+        "#00ffff", "#dc143c", "#ff00ff", "#00ff00", "#9370db", "#00008b", "#6b8e23", "#2e8b57"
+    ]
+    color_pointer = 0
+
     def __init__(self, master, image_helper):
         ttk.Label(master, text="Slot machine").grid(column=0, row=0)
         self.frame = ttk.Frame(master, borderwidth=2, relief="solid")
@@ -36,10 +41,28 @@ class Machine:
 
         self._set_defalt_slot_style()
 
+    def _get_color(self):
+        current_color = self.COLOR_PALLET[self.color_pointer]
+
+        if self.color_pointer == len(self.COLOR_PALLET) - 1:
+            self.color_pointer = 0
+        else:
+            self.color_pointer += 1
+
+        return current_color
+
     def _set_defalt_slot_style(self):
         for col in self.slot_matrix:
             for row in self.slot_matrix:
                 self.slot_matrix[col][row].reset_slot_color()
+
+    def _color_winning_slots(self, winning_symbol_code: int):
+        color = self._get_color()
+        for col in self.slot_matrix:
+            for row in self.slot_matrix:
+                current_slot = self.slot_matrix[col][row]
+                if current_slot.number_var.get() == winning_symbol_code:
+                    current_slot.change_color_winner(color)
 
     def _calculate_win(self, wager: IntVar, slot_combination: dict[int, int]):
         win = 0
@@ -47,15 +70,17 @@ class Machine:
         if not wager:
             return win
 
-        if LUCKY_NUMBER in slot_combination.keys():
-            # Power the win!
-            logger.debug(f"LUCKY NUMBER present: {slot_combination.keys()}")
-            win += pow(wager, slot_combination[LUCKY_NUMBER] + 1)
-
+        color_combination = {}
         for number, occurances in slot_combination.items():
             logger.debug(f"Number of occurances of {number} -> {occurances}")
             if occurances > 1 and number != LUCKY_NUMBER:
                 win += wager * occurances
+                self._color_winning_slots(number)
+
+        if LUCKY_NUMBER in slot_combination.keys():
+            # Power the win!
+            logger.debug(f"LUCKY NUMBER present: {slot_combination.keys()}")
+            win *= slot_combination[LUCKY_NUMBER] + 1 if win else wager * slot_combination[LUCKY_NUMBER]
         return win
 
     def spin(self, wager: int) -> int:
