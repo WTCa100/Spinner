@@ -41,6 +41,7 @@ class App():
 
         balance_numeric += win
         self.player.balance.set(balance_numeric)
+        self.payout.set(win)
 
     def __init__(self, root: Tk):
         root.wm_title("Slot machine game")
@@ -63,10 +64,15 @@ class App():
         balance_frame.grid(column=1, row=0)
         self.player = Player(initial_balance=100, name="Jane Doe")
         self.wager = IntVar(value=10)
-        ttk.Label(balance_frame, text="Your balance:").grid(column=0, row=1)
-        ttk.Label(balance_frame, textvariable=self.player.balance).grid(column=0, row=2)
-        ttk.Label(balance_frame, text="Wager:").grid(column=0, row=3)
-        
+        self.payout = IntVar(value=0)
+        ttk.Label(balance_frame, text="Your balance:").grid(column=0, row=0)
+        ttk.Label(balance_frame, textvariable=self.player.balance).grid(column=1, row=0)
+        ttk.Label(balance_frame, text="Wager:").grid(column=0, row=1)
+        validation_cmd = self.mainframe.register(self._validate_wager)
+        ttk.Entry(balance_frame, textvariable=self.wager, validate="all", validatecommand=(validation_cmd, "%P")).grid(column=1, row=1)
+        ttk.Label(balance_frame, text="Payout:").grid(column=0, row=2)
+        ttk.Label(balance_frame, textvariable=self.payout).grid(column=1, row=2)
+
         player_frame = ttk.Frame(root, borderwidth=1, border=1, relief="groove")
         player_frame.grid(column=1, row=1)
         ttk.Label(player_frame, text="Name:").grid(column=0, row=0)
@@ -79,8 +85,7 @@ class App():
         self.win_loose_ratio = DoubleVar(value=0)
         ttk.Label(player_frame, textvariable=self.win_loose_ratio).grid(column=1, row=3)
 
-        validation_cmd = self.mainframe.register(self._validate_wager)
-        ttk.Entry(balance_frame, textvariable=self.wager, validate="all", validatecommand=(validation_cmd, "%P")).grid(column=1, row=3)
+
 
         root.bind("<Return>", self._spin)
         root.bind("R", self._reset)
