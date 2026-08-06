@@ -22,6 +22,12 @@ class App():
         self.wager.set(10)
         self.win_loose_ratio.set(0.0)
 
+    def _loan(self, event=None):
+        current_player_balance = self.player.balance.get()
+        new_player_balance =  current_player_balance + 1000
+        logger.info(f"Loan taken with current player balance: {current_player_balance} -> {new_player_balance}")
+        self.player.balance.set(new_player_balance)
+
     def _spin(self, *args):
         balance_numeric = self.player.balance.get()
         wager_numeric = self.wager.get()
@@ -50,8 +56,9 @@ class App():
 
         main_menu_bar = Menu(root)
         game_menu = Menu(main_menu_bar)
-        game_menu.add_command(label="Reset", command=self._reset)
         main_menu_bar.add_cascade(menu=game_menu, label="Game")
+        game_menu.add_command(label="Reset", command=self._reset)
+        game_menu.add_command(label="Borrow money", command=self._loan)
         root['menu'] = main_menu_bar
 
         self.mainframe = ttk.Frame(root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
@@ -90,6 +97,8 @@ class App():
         root.bind("<Return>", self._spin)
         root.bind("R", self._reset)
         root.bind("r", self._reset)
+        root.bind("B", self._loan)
+        root.bind("b", self._loan)
 
 root = Tk()
 App(root=root)

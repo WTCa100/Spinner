@@ -15,7 +15,14 @@ class Machine:
     slot_matrix: dict[int, list[Slot]]
 
     COLOR_PALLET = [
-        "#00ffff", "#dc143c", "#ff00ff", "#00ff00", "#9370db", "#00008b", "#6b8e23", "#2e8b57"
+        "#00ffff",
+        "#dc143c",
+        "#ff00ff",
+        "#00ff00",
+        "#9370db",
+        "#00008b",
+        "#6b8e23",
+        "#2e8b57"
     ]
     color_pointer = 0
 
