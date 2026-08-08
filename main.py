@@ -52,6 +52,7 @@ class App():
     def __init__(self, root: Tk):
         root.wm_title("Slot machine game")
         root.geometry("640x480")
+        root.resizable(False, False)
         image_helper = ImageHelper()
 
         main_menu_bar = Menu(root)

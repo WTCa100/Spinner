@@ -78,7 +78,7 @@ class Machine:
             return win
 
         for number, occurances in slot_combination.items():
-            if occurances > 1 and number != LUCKY_NUMBER:
+            if occurances > 2 and number != LUCKY_NUMBER:
                 win += wager * occurances
                 self._color_winning_slots(number)
                 logger.debug(f"Winning symbol code: {number}. Occurances: {occurances}")
