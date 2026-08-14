@@ -15,6 +15,9 @@ LUCKY_NUMBER = 13
 class App():
     def _validate_wager(self, P):
         return str.isdigit(P)
+    
+    def _validate_name(self, P):
+        return len(P) > 0
 
     def _reset(self, event=None):
         self.player.reset_stats()
@@ -49,12 +52,22 @@ class App():
         self.player.balance.set(balance_numeric)
         self.payout.set(win)
 
+    # TODO Prevent the user from continue before providing his name
+    def popup_get_name(self):
+        name_getter_window = Toplevel()
+        name_getter_window.wm_title("Insert your name:")
+        Tk.focus_force(name_getter_window)
+        ttk.Label(name_getter_window, text="Name:").grid(column=0, row=0)
+        ttk.Entry(name_getter_window, textvariable=self.player_name).grid(column=1, row=0)
+        ttk.Button(name_getter_window, text="Done", command=name_getter_window.destroy).grid(column=0, row=1)
+
     def __init__(self, root: Tk):
         root.wm_title("Slot machine game")
         root.geometry("640x480")
         root.resizable(False, False)
         image_helper = ImageHelper()
 
+        self.player_name = StringVar(value="Jane Doe")
         main_menu_bar = Menu(root)
         game_menu = Menu(main_menu_bar)
         main_menu_bar.add_cascade(menu=game_menu, label="Game")
@@ -67,10 +80,9 @@ class App():
         self.machine = Machine(self.mainframe, image_helper)
         ttk.Button(self.mainframe, text="! ! !Spin! ! !", command=self._spin).grid(column=0, row=2)
 
-
         balance_frame = ttk.Frame(root, borderwidth=1, border=1, relief="groove")
         balance_frame.grid(column=1, row=0)
-        self.player = Player(initial_balance=100, name="Jane Doe")
+        self.player = Player(initial_balance=100, name=self.player_name.get())
         self.wager = IntVar(value=10)
         self.payout = IntVar(value=0)
         ttk.Label(balance_frame, text="Your balance:").grid(column=0, row=0)
@@ -92,7 +104,6 @@ class App():
         ttk.Label(player_frame, text="Ratio:").grid(column=0, row=3)
         self.win_loose_ratio = DoubleVar(value=0)
         ttk.Label(player_frame, textvariable=self.win_loose_ratio).grid(column=1, row=3)
-
 
 
         root.bind("<Return>", self._spin)
