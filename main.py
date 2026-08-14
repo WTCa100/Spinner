@@ -52,7 +52,7 @@ class App():
         self.player.balance.set(balance_numeric)
         self.payout.set(win)
 
-    # TODO Prevent the user from continue before providing his name
+    # TODO Prevent the user from continue before providing his name.
     def popup_get_name(self):
         name_getter_window = Toplevel()
         name_getter_window.wm_title("Insert your name:")
