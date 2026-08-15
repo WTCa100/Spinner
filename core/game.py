@@ -16,13 +16,13 @@ class Game:
     def _validate_wager(self, P):
         return str.isdigit(P)
 
-    def _reset(self, event=None):
+    def reset(self, event=None):
         self.player.reset_stats()
         self.machine.reset_spin_count()
         self.wager.set(10)
         self.win_loose_ratio.set(0.0)
 
-    def _loan(self, event=None):
+    def loan(self, event=None):
         current_player_balance = self.player.balance.get()
         new_player_balance =  current_player_balance + 1000
         logger.info(f"Loan taken with current player balance: {current_player_balance} -> {new_player_balance}")
@@ -52,13 +52,6 @@ class Game:
     def __init__(self, root: Tk, player_name: StringVar):
         self.root = root
         image_helper = ImageHelper()
-
-        main_menu_bar = Menu(self.root)
-        game_menu = Menu(main_menu_bar)
-        main_menu_bar.add_cascade(menu=game_menu, label="Game")
-        game_menu.add_command(label="Reset", command=self._reset)
-        game_menu.add_command(label="Borrow money", command=self._loan)
-        self.root['menu'] = main_menu_bar
 
         self.mainframe = ttk.Frame(self.root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
         self.mainframe.grid(column=0, row=0, padx=25, pady=25, sticky=NSEW)
@@ -92,7 +85,7 @@ class Game:
 
 
         self.root.bind("<Return>", self._spin)
-        self.root.bind("R", self._reset)
-        self.root.bind("r", self._reset)
-        self.root.bind("B", self._loan)
-        self.root.bind("b", self._loan)
+        self.root.bind("R", self.reset)
+        self.root.bind("r", self.reset)
+        self.root.bind("B", self.loan)
+        self.root.bind("b", self.loan)

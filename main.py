@@ -11,23 +11,37 @@ logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s 
 LUCKY_NUMBER = 13
 
 class App():
+
+
+    def _create_menus(self):
+        main_menu_bar = Menu(self.root)
+        game_menu = Menu(main_menu_bar)
+        main_menu_bar.add_cascade(menu=game_menu, label="Game")
+        game_menu.add_command(label="Reset", command=self.game.reset)
+        game_menu.add_command(label="Borrow money", command=self.game.loan)
+        self.root['menu'] = main_menu_bar
+
     def _run(self):
         # This is function is a prepare function which gather information before starting main event loop.
         def proceed(self, popup_window):
             if len(self.player_name.get()):
                 popup_window.destroy()
                 self.game = Game(self.root, self.player_name)
+                self._create_menus()
                 return
             invalid_name_label = ttk.Label(master=popup_window, text="Please provide a user name!", foreground="Red")
             invalid_name_label.grid(column=0, row=2)
+            popup_window.unbind("<Return>")
 
         name_getter_window = Toplevel()
         name_getter_window.wm_title("Insert your name:")
         name_getter_window.protocol("WM_DELETE_WINDOW", self.root.destroy)
-        Tk.focus_force(name_getter_window)
         ttk.Label(name_getter_window, text="Name:").grid(column=0, row=0)
-        ttk.Entry(name_getter_window, textvariable=self.player_name).grid(column=1, row=0)
+        name_entry = ttk.Entry(name_getter_window, textvariable=self.player_name)
+        name_entry.grid(column=1, row=0)
+        Tk.focus_force(name_entry)
         ttk.Button(name_getter_window, text="Done", command= lambda: proceed(self, name_getter_window)).grid(column=0, row=1)
+        name_getter_window.bind("<Return>", func= lambda e: proceed(self, name_getter_window))
 
     def __init__(self, root: Tk):
         self.root = root
