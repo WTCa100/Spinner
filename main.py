@@ -52,35 +52,39 @@ class App():
         self.player.balance.set(balance_numeric)
         self.payout.set(win)
 
-    # TODO Prevent the user from continue before providing his name.
-    def popup_get_name(self):
+    def _popup_get_name(self):
+        def proceed(self, popup_window):
+            if len(self.player_name.get()):
+                popup_window.destroy()
+                self._start()
+                return
+            invalid_name_label = ttk.Label(master=popup_window, text="Please provide a user name!", foreground="Red")
+            invalid_name_label.grid(column=0, row=2)
+
         name_getter_window = Toplevel()
         name_getter_window.wm_title("Insert your name:")
+        name_getter_window.protocol("WM_DELETE_WINDOW", func=lambda: self.root.destroy())
         Tk.focus_force(name_getter_window)
         ttk.Label(name_getter_window, text="Name:").grid(column=0, row=0)
         ttk.Entry(name_getter_window, textvariable=self.player_name).grid(column=1, row=0)
-        ttk.Button(name_getter_window, text="Done", command=name_getter_window.destroy).grid(column=0, row=1)
+        ttk.Button(name_getter_window, text="Done", command= lambda: proceed(self, name_getter_window)).grid(column=0, row=1)
 
-    def __init__(self, root: Tk):
-        root.wm_title("Slot machine game")
-        root.geometry("640x480")
-        root.resizable(False, False)
+    def _start(self):
         image_helper = ImageHelper()
 
-        self.player_name = StringVar(value="Jane Doe")
-        main_menu_bar = Menu(root)
+        main_menu_bar = Menu(self.root)
         game_menu = Menu(main_menu_bar)
         main_menu_bar.add_cascade(menu=game_menu, label="Game")
         game_menu.add_command(label="Reset", command=self._reset)
         game_menu.add_command(label="Borrow money", command=self._loan)
-        root['menu'] = main_menu_bar
+        self.root['menu'] = main_menu_bar
 
-        self.mainframe = ttk.Frame(root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
+        self.mainframe = ttk.Frame(self.root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
         self.mainframe.grid(column=0, row=0, padx=25, pady=25, sticky=NSEW)
         self.machine = Machine(self.mainframe, image_helper)
         ttk.Button(self.mainframe, text="! ! !Spin! ! !", command=self._spin).grid(column=0, row=2)
 
-        balance_frame = ttk.Frame(root, borderwidth=1, border=1, relief="groove")
+        balance_frame = ttk.Frame(self.root, borderwidth=1, border=1, relief="groove")
         balance_frame.grid(column=1, row=0)
         self.player = Player(initial_balance=100, name=self.player_name.get())
         self.wager = IntVar(value=10)
@@ -93,7 +97,7 @@ class App():
         ttk.Label(balance_frame, text="Payout:").grid(column=0, row=2)
         ttk.Label(balance_frame, textvariable=self.payout).grid(column=1, row=2)
 
-        player_frame = ttk.Frame(root, borderwidth=1, border=1, relief="groove")
+        player_frame = ttk.Frame(self.root, borderwidth=1, border=1, relief="groove")
         player_frame.grid(column=1, row=1)
         ttk.Label(player_frame, text="Name:").grid(column=0, row=0)
         ttk.Label(player_frame, textvariable=self.player.name).grid(column=1, row=0)
@@ -106,11 +110,20 @@ class App():
         ttk.Label(player_frame, textvariable=self.win_loose_ratio).grid(column=1, row=3)
 
 
-        root.bind("<Return>", self._spin)
-        root.bind("R", self._reset)
-        root.bind("r", self._reset)
-        root.bind("B", self._loan)
-        root.bind("b", self._loan)
+        self.root.bind("<Return>", self._spin)
+        self.root.bind("R", self._reset)
+        self.root.bind("r", self._reset)
+        self.root.bind("B", self._loan)
+        self.root.bind("b", self._loan)
+
+    def __init__(self, root: Tk):
+        self.root = root
+        self.root.wm_title("Slot machine game")
+        self.root.geometry("640x480")
+        self.root.resizable(False, False)
+        self.player_name = StringVar(value="Jane Doe")
+
+        self._popup_get_name()
 
 root = Tk()
 App(root=root)
