@@ -1,5 +1,5 @@
 from PIL import Image, ImageTk
-from image_helper.symbol import SYMBOLS, Symbol
+from helpers.symbol import SYMBOLS, Symbol
 
 import logging
 

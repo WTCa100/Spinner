@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 
-from image_helper.image_helper import ImageHelper
+from helpers.image_helper import ImageHelper
 
 import random
 import logging

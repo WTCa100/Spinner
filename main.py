@@ -4,6 +4,7 @@ from tkinter import ttk
 import logging
 
 from core.game import Game
+from helpers.stats_helper import dump_statistics
 
 logger = logging.getLogger("MainLoop")
 logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s > %(msg)s", level=logging.DEBUG)
@@ -13,7 +14,8 @@ LUCKY_NUMBER = 13
 class App():
 
     def _dump_stats(self, detailed=True):
-        pass
+        game_info = self.game.turn_snapshots
+        dump_statistics(game_info, detailed)
 
     def _create_menus(self):
         main_menu_bar = Menu(self.root)

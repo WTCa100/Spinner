@@ -6,12 +6,15 @@ import logging
 from core.slot import Slot
 from core.machine import Machine
 from core.player import Player
-from image_helper.image_helper import ImageHelper
+from helpers.image_helper import ImageHelper
 
 logger = logging.getLogger("Game")
 logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s > %(msg)s", level=logging.DEBUG)
 
 class Game:
+
+    turn_snapshots: dict[int, tuple]
+
     def _validate_wager(self, P):
         return str.isdigit(P)
 
@@ -51,9 +54,16 @@ class Game:
         balance_numeric += win
         self.player.balance.set(balance_numeric)
         self.payout.set(win)
+        self.turn_snapshots[self.machine.spin_count.get()] = (wager_numeric,
+                                                              win,
+                                                              self.player.total_won.get(),
+                                                              self.player.total_lost.get(),
+                                                              self.player.total_diff.get(),
+                                                              self.player.balance.get())
 
     def __init__(self, root: Tk, player_name: StringVar):
         self.root = root
+        self.turn_snapshots = {}
         image_helper = ImageHelper()
 
         self.mainframe = ttk.Frame(self.root, borderwidth=1, border=1, padding=(10, 10, 10, 10))

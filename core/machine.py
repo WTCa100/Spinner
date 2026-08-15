@@ -3,7 +3,7 @@ from tkinter import ttk
 
 import logging
 
-from image_helper.image_helper import ImageHelper
+from helpers.image_helper import ImageHelper
 from core.slot import Slot
 
 LUCKY_NUMBER = 13
