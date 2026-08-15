@@ -12,13 +12,20 @@ LUCKY_NUMBER = 13
 
 class App():
 
+    def _dump_stats(self, detailed=True):
+        pass
 
     def _create_menus(self):
         main_menu_bar = Menu(self.root)
         game_menu = Menu(main_menu_bar)
-        main_menu_bar.add_cascade(menu=game_menu, label="Game")
         game_menu.add_command(label="Reset", command=self.game.reset)
         game_menu.add_command(label="Borrow money", command=self.game.loan)
+
+        stats_menu = Menu(main_menu_bar)
+        stats_menu.add_command(label="Dump final statistics", command=lambda: self._dump_stats(detailed=False))
+        stats_menu.add_command(label="Dump detailed statistics", command=lambda: self._dump_stats())
+        main_menu_bar.add_cascade(menu=game_menu, label="Game")
+        main_menu_bar.add_cascade(menu=stats_menu, label="Stats")
         self.root['menu'] = main_menu_bar
 
     def _run(self):

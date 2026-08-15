@@ -12,7 +12,6 @@ logger = logging.getLogger("Game")
 logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s > %(msg)s", level=logging.DEBUG)
 
 class Game:
-
     def _validate_wager(self, P):
         return str.isdigit(P)
 
@@ -41,8 +40,12 @@ class Game:
         logger.debug(f"Won: {win}")
         if win > 0:
             self.player.n_wins.set(self.player.n_wins.get() + 1)
+            self.player.total_won.set(self.player.total_won.get() + win)
+            self.player.total_diff.set(self.player.total_diff.get() + win - wager_numeric)
         else:
             self.player.n_looses.set(self.player.n_looses.get() + 1)
+            self.player.total_lost.set(self.player.total_lost.get() + wager_numeric)
+            self.player.total_diff.set(self.player.total_diff.get() - wager_numeric)
         self.win_loose_ratio.set(self.player.n_wins.get() / self.machine.spin_count.get())
 
         balance_numeric += win
@@ -82,7 +85,8 @@ class Game:
         ttk.Label(player_frame, text="Ratio:").grid(column=0, row=3)
         self.win_loose_ratio = DoubleVar(value=0)
         ttk.Label(player_frame, textvariable=self.win_loose_ratio).grid(column=1, row=3)
-
+        ttk.Label(player_frame, text="Money diff:").grid(column=0, row=4)
+        ttk.Label(player_frame, textvariable=self.player.total_diff).grid(column=1, row=4)
 
         self.root.bind("<Return>", self._spin)
         self.root.bind("R", self.reset)

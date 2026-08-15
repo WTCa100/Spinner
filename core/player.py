@@ -11,6 +11,9 @@ class Player:
         self.balance = IntVar(value=initial_balance)
         self.n_wins = IntVar(value=0)
         self.n_looses = IntVar(value=0)
+        self.total_won =  IntVar(value=0)
+        self.total_lost = IntVar(value=0)
+        self.total_diff = IntVar(value=0)
         self.name = StringVar(value=name)
 
     def reset_stats(self):
