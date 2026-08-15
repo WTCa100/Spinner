@@ -3,9 +3,7 @@ from tkinter import ttk
 
 import logging
 
-from image_helper.image_helper import ImageHelper
-from machine import Machine
-from player import Player
+from core.game import Game
 
 logger = logging.getLogger("MainLoop")
 logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s > %(msg)s", level=logging.DEBUG)
@@ -13,108 +11,23 @@ logging.basicConfig(format="%(levelname)s (%(asctime)s) %(filename)s:%(lineno)s 
 LUCKY_NUMBER = 13
 
 class App():
-    def _validate_wager(self, P):
-        return str.isdigit(P)
-    
-    def _validate_name(self, P):
-        return len(P) > 0
-
-    def _reset(self, event=None):
-        self.player.reset_stats()
-        self.machine.reset_spin_count()
-        self.wager.set(10)
-        self.win_loose_ratio.set(0.0)
-
-    def _loan(self, event=None):
-        current_player_balance = self.player.balance.get()
-        new_player_balance =  current_player_balance + 1000
-        logger.info(f"Loan taken with current player balance: {current_player_balance} -> {new_player_balance}")
-        self.player.balance.set(new_player_balance)
-
-    def _spin(self, *args):
-        balance_numeric = self.player.balance.get()
-        wager_numeric = self.wager.get()
-
-        if balance_numeric < wager_numeric:
-            return
-
-        balance_numeric -= wager_numeric
-        win = self.machine.spin(wager=wager_numeric)
-
-        logger.debug(f"Won: {win}")
-        if win > 0:
-            self.player.n_wins.set(self.player.n_wins.get() + 1)
-        else:
-            self.player.n_looses.set(self.player.n_looses.get() + 1)
-        self.win_loose_ratio.set(self.player.n_wins.get() / self.machine.spin_count.get())
-
-        balance_numeric += win
-        self.player.balance.set(balance_numeric)
-        self.payout.set(win)
-
-    def _popup_get_name(self):
+    def _run(self):
+        # This is function is a prepare function which gather information before starting main event loop.
         def proceed(self, popup_window):
             if len(self.player_name.get()):
                 popup_window.destroy()
-                self._start()
+                self.game = Game(self.root, self.player_name)
                 return
             invalid_name_label = ttk.Label(master=popup_window, text="Please provide a user name!", foreground="Red")
             invalid_name_label.grid(column=0, row=2)
 
         name_getter_window = Toplevel()
         name_getter_window.wm_title("Insert your name:")
-        name_getter_window.protocol("WM_DELETE_WINDOW", func=lambda: self.root.destroy())
+        name_getter_window.protocol("WM_DELETE_WINDOW", self.root.destroy)
         Tk.focus_force(name_getter_window)
         ttk.Label(name_getter_window, text="Name:").grid(column=0, row=0)
         ttk.Entry(name_getter_window, textvariable=self.player_name).grid(column=1, row=0)
         ttk.Button(name_getter_window, text="Done", command= lambda: proceed(self, name_getter_window)).grid(column=0, row=1)
-
-    def _start(self):
-        image_helper = ImageHelper()
-
-        main_menu_bar = Menu(self.root)
-        game_menu = Menu(main_menu_bar)
-        main_menu_bar.add_cascade(menu=game_menu, label="Game")
-        game_menu.add_command(label="Reset", command=self._reset)
-        game_menu.add_command(label="Borrow money", command=self._loan)
-        self.root['menu'] = main_menu_bar
-
-        self.mainframe = ttk.Frame(self.root, borderwidth=1, border=1, padding=(10, 10, 10, 10))
-        self.mainframe.grid(column=0, row=0, padx=25, pady=25, sticky=NSEW)
-        self.machine = Machine(self.mainframe, image_helper)
-        ttk.Button(self.mainframe, text="! ! !Spin! ! !", command=self._spin).grid(column=0, row=2)
-
-        balance_frame = ttk.Frame(self.root, borderwidth=1, border=1, relief="groove")
-        balance_frame.grid(column=1, row=0)
-        self.player = Player(initial_balance=100, name=self.player_name.get())
-        self.wager = IntVar(value=10)
-        self.payout = IntVar(value=0)
-        ttk.Label(balance_frame, text="Your balance:").grid(column=0, row=0)
-        ttk.Label(balance_frame, textvariable=self.player.balance).grid(column=1, row=0)
-        ttk.Label(balance_frame, text="Wager:").grid(column=0, row=1)
-        validation_cmd = self.mainframe.register(self._validate_wager)
-        ttk.Entry(balance_frame, textvariable=self.wager, validate="all", validatecommand=(validation_cmd, "%P")).grid(column=1, row=1)
-        ttk.Label(balance_frame, text="Payout:").grid(column=0, row=2)
-        ttk.Label(balance_frame, textvariable=self.payout).grid(column=1, row=2)
-
-        player_frame = ttk.Frame(self.root, borderwidth=1, border=1, relief="groove")
-        player_frame.grid(column=1, row=1)
-        ttk.Label(player_frame, text="Name:").grid(column=0, row=0)
-        ttk.Label(player_frame, textvariable=self.player.name).grid(column=1, row=0)
-        ttk.Label(player_frame, text="Wins:").grid(column=0, row=1)
-        ttk.Label(player_frame, textvariable=self.player.n_wins).grid(column=1, row=1)
-        ttk.Label(player_frame, text="Looses:").grid(column=0, row=2)
-        ttk.Label(player_frame, textvariable=self.player.n_looses).grid(column=1, row=2)
-        ttk.Label(player_frame, text="Ratio:").grid(column=0, row=3)
-        self.win_loose_ratio = DoubleVar(value=0)
-        ttk.Label(player_frame, textvariable=self.win_loose_ratio).grid(column=1, row=3)
-
-
-        self.root.bind("<Return>", self._spin)
-        self.root.bind("R", self._reset)
-        self.root.bind("r", self._reset)
-        self.root.bind("B", self._loan)
-        self.root.bind("b", self._loan)
 
     def __init__(self, root: Tk):
         self.root = root
@@ -123,7 +36,7 @@ class App():
         self.root.resizable(False, False)
         self.player_name = StringVar(value="Jane Doe")
 
-        self._popup_get_name()
+        self._run()
 
 root = Tk()
 App(root=root)

@@ -4,7 +4,7 @@ from tkinter import ttk
 import logging
 
 from image_helper.image_helper import ImageHelper
-from slot import Slot
+from core.slot import Slot
 
 LUCKY_NUMBER = 13
 logger = logging.getLogger("MachineLog")
