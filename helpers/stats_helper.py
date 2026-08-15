@@ -1,9 +1,15 @@
 from time import strftime
+from pathlib import Path
 import csv
 
+STATS_FOLDER = Path("Game_stats")
+
 def dump_statistics(turns_info: dict[int, tuple], detailed = True):
+    if not STATS_FOLDER.is_dir():
+        STATS_FOLDER.mkdir()
+
     time_triggered = strftime("%Y%m%d_%H%M%S")
-    file_path = f"Statistics_Dump_{'Detailed_' if detailed else ''}{time_triggered}.csv"
+    file_path = STATS_FOLDER / f"Statistics_Dump_{'Detailed_' if detailed else ''}{time_triggered}.csv"
     keys = ["Turn", "Wager_numeric", "Turn_win"]
     if detailed:
         keys += ["Total_player_win", "Total_player_loose", "Total_player_diff", "Current_player_balance"]
