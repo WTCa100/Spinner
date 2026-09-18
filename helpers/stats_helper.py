@@ -13,7 +13,7 @@ def dump_statistics(turns_info: dict[int, tuple], detailed = True):
     keys = ["Turn", "Wager_numeric", "Turn_win"]
     if detailed:
         keys += ["Total_player_win", "Total_player_loose", "Total_player_diff", "Current_player_balance"]
-    with open(str(file_path), mode="w") as fp:
+    with open(str(file_path), mode="w", newline='') as fp:
         writer = csv.writer(fp)
         writer.writerow(keys)
         for turn_id, info in turns_info.items():
