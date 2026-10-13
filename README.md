@@ -136,6 +136,18 @@ However if the user decides to stick with the manual simulation there are some t
 ### Art
 This project consists of 20 sprites which were made by me inside [Aseprite](https://www.aseprite.org/) which I highly recommend on using, as it is a great tool even for such amateur as me. You can find all sprites under `res/` folder.
 
+Bare in mind that if you want to add or edit any sprites you must ensure that they are `32x32` as this was the desired resolution during the development. When adding and deleting don't forget to modify `helpers/symbol.py`.
+
+```Python
+SYMBOLS = [
+    Symbol("res/Bannana-Sprite.png", 0, "Bannana"),
+    # ...
+    Symbol("res/Bell-Sprite.png", 19, "Bell"),
+    Symbol("res/Symbol-file.png", 20, "Symbol Name")
+]
+```
+As well as changing the `random.randint` range to also include your additional symbols!
+
 ## Potential future improvements
 This code was made so that my friend could have some fun regarding mathematical code creation and manipulation, yet there was no code contributied towards it. Any future improvements that I may suggest would be to either prize calculation or slot generation.
 
