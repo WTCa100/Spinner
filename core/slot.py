@@ -20,7 +20,7 @@ class Slot:
         self.image_helper = image_helper
         self.number_var = n_tkVar
         number_value = self.number_var.get()
-        # Temporar logic for now
+        # Temporary logic for now
         if number_value % 2 == 0:
             w = 0.5
         else:

@@ -3,7 +3,6 @@ from tkinter import ttk
 
 import logging
 
-from core.slot import Slot
 from core.machine import Machine
 from core.player import Player
 from helpers.image_helper import ImageHelper

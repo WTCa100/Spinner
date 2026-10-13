@@ -20,3 +20,4 @@ class Player:
         self.balance.set(100)
         self.n_wins.set(0)
         self.n_looses.set(0)
+        self.total_diff.set(0)
