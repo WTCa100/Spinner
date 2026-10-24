@@ -20,8 +20,9 @@ $ python main.py
 In general this game was created to help my friend get to know Python a little better, enabling him to implement more complex mathemtacial prinicples into it without polluting his mind with less-mathematical concepts of programming. However solution to this game was made by me for the time being. You can learn about slot randomness later on.
 
 
-### Main screeen
+### Main screen
 ![Main screen of the game](readme_res/main_screen.png)
+
 The game consists of a very solid concept, player gets money at start, they can modify their wager and spin the wheel of greed, hoping for winning this round. We can find some information regarding the game process (lower right corner), user balance and session related information (center to right), and slot machine (left).
 
 ### Slot generation
