@@ -22,6 +22,7 @@ In general this game was created to help my friend get to know Python a little b
 
 ### Main screeen
 ![Main screen of the game](readme_res/main_screen.png)
+
 The game consists of a very solid concept, player gets money at start, they can modify their wager and spin the wheel of greed, hoping for winning this round. We can find some information regarding the game process (lower right corner), user balance and session related information (center to right), and slot machine (left).
 
 ### Slot generation
