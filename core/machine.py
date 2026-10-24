@@ -86,7 +86,7 @@ class Machine:
         if LUCKY_NUMBER in slot_combination.keys():
             # Power the win!
             logger.debug(f"LUCKY NUMBER present: {slot_combination.keys()}")
-            win *= slot_combination[LUCKY_NUMBER] + 1 if win else wager * slot_combination[LUCKY_NUMBER]
+            win = (slot_combination[LUCKY_NUMBER] + 1) * win if win else wager * slot_combination[LUCKY_NUMBER]
         return win
 
     def spin(self, wager: int) -> int:
